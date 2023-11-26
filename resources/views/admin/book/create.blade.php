@@ -1,35 +1,18 @@
-<!DOCTYPE html>
-<html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <title>book register</title>
-    </head>
-
-    <body>
-        <main>
-            <h1>book register</h1>
-            <form action="/books" method="POST">
-                @csrf
-                <div>
-                    <label>category</label>
-                    <select name="category_id">
-                        @foreach ($categories as $category)
-                            <option value="{{$category->id}}">
-                                {{$category->title}}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label>title</label>
-                    <input type="text" name="title">
-                </div>
-                <div>
-                    <label>price</label>
-                    <input type="text" name="price">
-                </div>
-                <input type="submit" value="送信">
-            </form>
-        </main>
-    </body>
-</html>
+<x-layouts.book-manager>
+    <x-slot:title>
+        BookRegister
+    </x-slot:title>
+    <h1>book register</h1>
+    @if($errors->any())
+        <x-alert class="danger">
+            <x-error-messages :$errors/>
+        </x-alert>
+    @endif
+    <form action="{{route('book.store')}}" method="POST">
+        @csrf
+        <x-book-form :$categories :$authors />
+        <input type="submit" value="送信">
+    </form>
+</x-layouts.book-manager>
+    
+        
