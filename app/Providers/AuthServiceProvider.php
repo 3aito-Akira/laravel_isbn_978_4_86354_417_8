@@ -4,6 +4,8 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use App\Models\Admin;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         //
+        'App\Models\Book' => 'App\Policies\BookPolicy',
     ];
 
     /**
@@ -22,5 +25,8 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        Gate::define('example-com-user',function (Admin $admin){
+            return substr($admin->login_id, -11) === 'example.com';
+        });
     }
 }

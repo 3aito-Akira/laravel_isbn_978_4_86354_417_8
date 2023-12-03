@@ -8,6 +8,10 @@
     <body>
         <header>
             BookManagementSystem
+            <form action="{{route('admin.destroy')}}" method="POST">
+                @csrf
+                <input type="submit" value="ログアウト">
+            </form>
             <hr>
         </header>
         <main>

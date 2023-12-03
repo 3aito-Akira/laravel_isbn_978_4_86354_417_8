@@ -7,7 +7,9 @@ use App\Http\Requests\BookPostRequest;
 use App\Http\Requests\BookPutRequest;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use App\Models\Category;
 use App\Models\Book;
@@ -17,6 +19,12 @@ use Illuminate\Http\Response;
 
 class BookController extends Controller
 {
+
+    public function __construct() 
+    {
+        $this->authorizeResource(Book::class, 'book');
+    }
+
     //
     public function index(): Response {
         $books = Book::with('category')->orderBy('category_id')->orderBy('title')->get();
@@ -28,6 +36,9 @@ class BookController extends Controller
 
     public function show(Book $book): View 
     {
+
+        Log::info('index was referred now.ID='.$book->id);
+
         return view('admin/book/show',compact('book'));
     }
 
@@ -42,11 +53,13 @@ class BookController extends Controller
 
     public function store(BookPostRequest $request): RedirectResponse 
     {
+
         $book = new Book();
 
         $book->category_id = $request->category_id;
         $book->title = $request->title;
         $book->price = $request->price;
+        $book->admin_id = Auth::id();
 
         DB::transaction(function() use($book,$request) {
             $book->save();
@@ -58,6 +71,7 @@ class BookController extends Controller
 
     public function edit(Book $book): View
     {
+
         $categories = Category::all();
 
         $authors = Author::all();
@@ -69,6 +83,7 @@ class BookController extends Controller
 
     public function update(BookPutRequest $request, Book $book): RedirectResponse
     {
+   
         $book->category_id = $request->category_id;
         $book->title = $request->title;
         $book->price = $request->price;
@@ -80,10 +95,15 @@ class BookController extends Controller
 
     public function destroy(Book $book): RedirectResponse
     {
+        /*$this->authorize('update',$book);*/
+
+        $book->delete();
+        /*
         DB::transaction(function() use($book){
             $book->authors()->detach();
             $book->delete();
         });
+        */
 
         return redirect(route('book.index'))->with('message',$book->title.'を削除しました');
 

@@ -16,7 +16,7 @@
         <hr>
         <ul>
             @foreach ($messages as $message)
-                <li>{{ $message->body }}</li>
+                {{ $message->body }}
             @endforeach
         </ul>
     </main>
